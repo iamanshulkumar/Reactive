@@ -38,9 +38,44 @@ export async function login() {
         const secret = url.searchParams.get('secret')?.toString();
         const userId = url.searchParams.get('userId')?.toString();
 
+        if(!secret || !userId) throw new Error('Failed to login!');
 
+        const session = await account.createSession(userId, secret);
+
+        if(!session) throw new Error('Failed to create a session!');
+
+        return true;
     } catch (error) {
         console.error(error);
         return false;
+    }
+}
+
+export async function logout() {
+    try {
+        await account.deleteSession('current');
+        return true;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+export async function getUser() {
+    try {
+        const response = await account.get();
+
+        if(response.$id) {
+            const userAvatar = avatar.getInitials(response.name);
+
+            return {
+                ... response,
+                avatar: userAvatar.toString(),
+            }
+        }
+        
+    } catch (error) {
+        console.error(error);
+        return null;
     }
 }

@@ -1,14 +1,24 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, Image, TouchableOpacity, Alert } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import images from '@/constants/images'
 import icons from '@/constants/icons'
+import { useGlobalContext } from '@/lib/global-provider'
 
 const SignIn = () => {
+  const { refetch, loading, isLoggedIn} = useGlobalContext();
 
-  const handleLogin = () => {
+  if(!loading && isLoggedIn) return <Rediect href="/" />
 
+  const handleLogin = async () => {
+    const result = await login();
+
+    if(result){
+      refetch();
+    } else {
+      Alert.aleart('Error', 'Failed to login');
+    }
   }
   return (
     <SafeAreaView className="bg-white h-full">
